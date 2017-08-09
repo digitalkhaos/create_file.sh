@@ -1,33 +1,33 @@
-#Create a script that you can point a directory at, and it will go ahead delete files that are more than X days old.
-#So the arguments to the script would be...
-#./cleanup.sh -d "/tmp/backups" -t 30
-#-d is the directory
-#-t is the number of days
-
 #!/bin/bash
 
-DIRECTORY
-
-#does directory exist
-if [ ! -z `ls ($DIRECTORY)` ]; then
-	echo "Directory does not exist.  Bailing"
-	exit 1
-fi 
+showsyntax() {
+	echo "Syntax: $0 -d <directory> -t <age of file>"
+}
 
 while getopts "d:t:" opt; do
 	case $opt in
 		d)
-			echo "-d was called"
-			$DIRECTORY=$OPTARG
+			DIRECTORY=$OPTARG	
 			;;
 		t)
-			echo "-t was called"
+			FILE_AGE=$OPTARG
 			;;
 	esac
 done
 
-for file in $DIRECTORY
-	do
-		NOW=`date +%s`
-		FILE_AGE=`stat $OPTARG`
+if [ ! -d $DIRECTORY ]; then
+	echo "Directory does not exist. "
+	showsyntax
+	exit 1
+fi
+
+if ([ -z "$DIRECTORY" ] || [ -z $FILE_AGE ]); then
+	echo "Missing arguments."
+	showsyntax
+	exit 1
+fi
+
+echo "Cleaning up files older than $FILE_AGE days..."
+find $DIRECTORY -mtime +$FILE_AGE -exec rm "{}" \;
+echo "Done!"
 
