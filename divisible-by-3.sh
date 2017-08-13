@@ -22,30 +22,19 @@ fi
 #Check if script is already running
 for pid in $(pidof -x divisible-by-3.sh); do
     if [ $pid != $$ ]; then
-        echo "[$(date)] : divisible-by-3.sh : Process is already running with PID $pid"
+        echo "script is already running."
         exit 1
     fi
 done
 
+
 #Create 50 files
 for i in {1..50}; do
-
-	if [ $i==13 ]; then
-		touch "/home/john/code/scripts/script_practice/tmp/delta13.tar.gz" 
-		continue
-	fi
-	if [ $i==23 ]; then
-		touch "/home/john/code/scripts/script_practice/tmp/delta23.tar.gz"
-		continue
-	fi
-	if [ $i==43 ]; then
-		touch "/home/john/code/scripts/script_practice/tmp/delta43.tar.gz"
-		continue
-	fi
-	if [ $(($i%3)) == 0 ]; then
-		touch "/home/john/code/scripts/script_practice/tmp/delta$i.tar.gz"
+  x=`printf %02d $i`
+	if [ $(($i % 3)) == 0 ] || [[ $i == *3 ]]; then
+		touch "/home/john/code/scripts/script_practice/tmp/delta$x.tar.gz"
 	else
-		touch "/home/john/code/scripts/script_practice/tmp/delta$i.tgz"
+		touch "/home/john/code/scripts/script_practice/tmp/delta$x.tgz"
 	fi
 done
 
