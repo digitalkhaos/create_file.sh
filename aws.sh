@@ -20,19 +20,20 @@ function show_menu {
 
 function read_input {
 	local _INPUT
-	KEY=Name
-
+  #KEY=Name
+	
 	read -p ">>" _INPUT
 
 	case $_INPUT in
 		1)
-			INSTANCE_ID=`aws ec2 describe-instances | jq .Reservations[0].Instances[0].InstanceId`
-			IP_ADDRESS=`aws ec2 describe-instances | jq .Reservations[0].Instances[0].PrivateIpAddress`
-			INSTANCE_NAME=`aws ec2 describe-tags --filters "Name=key,Values=$KEY" --output=text | cut -f5`
+			RESULT=`aws ec2 describe-instances --filter Name=instance-state-name,Values=running --query 'Reservations[].Instances[].[PrivateIpAddress,InstanceId,Tags[?Key==\`Name\`] | [0].Value]' --output text`
+	  #	RESULT=`aws ec2 describe-instances --filter Name=instance-state-name,Values=running --query 'Reservations[].Instances[].[PrivateIpAddress,InstanceId,Tags[?Key==`Name`] | [0].Value]' --output text`
+		#	INSTANCE_ID=`aws ec2 describe-instances --filter Name=instance-state-name,Values=running | jq .Reservations[0].Instances[0].InstanceId`
+ 	  #	IP_ADDRESS=`aws ec2 describe-instances | jq .Reservations[0].Instances[0].PrivateIpAddress`
+		#	INSTANCE_NAME=`aws ec2 describe-tags --filters "Name=key,Values=$KEY" --output=text | cut -f5`
 			echo
-			echo "INSTANCE ID              PRIVATE IP         NAME"
-			echo "---------------------------------------------------"
-		  echo "$INSTANCE_ID | $IP_ADDRESS | $INSTANCE_NAME"	
+		 # echo "$INSTANCE_ID | $IP_ADDRESS | $INSTANCE_NAME"	
+			echo "$RESULT"
 			echo
 			;;
 		2)
