@@ -20,30 +20,35 @@ function show_menu {
 
 function read_input {
 	local _INPUT
-  #KEY=Name
-	
 	read -p ">>" _INPUT
 
 	case $_INPUT in
 		1)
 			RESULT=`aws ec2 describe-instances --filter Name=instance-state-name,Values=running --query 'Reservations[].Instances[].[PrivateIpAddress,InstanceId,Tags[?Key==\`Name\`] | [0].Value]' --output text`
-	  #	RESULT=`aws ec2 describe-instances --filter Name=instance-state-name,Values=running --query 'Reservations[].Instances[].[PrivateIpAddress,InstanceId,Tags[?Key==`Name`] | [0].Value]' --output text`
-		#	INSTANCE_ID=`aws ec2 describe-instances --filter Name=instance-state-name,Values=running | jq .Reservations[0].Instances[0].InstanceId`
- 	  #	IP_ADDRESS=`aws ec2 describe-instances | jq .Reservations[0].Instances[0].PrivateIpAddress`
-		#	INSTANCE_NAME=`aws ec2 describe-tags --filters "Name=key,Values=$KEY" --output=text | cut -f5`
 			echo
-		 # echo "$INSTANCE_ID | $IP_ADDRESS | $INSTANCE_NAME"	
 			echo "$RESULT"
 			echo
 			;;
 		2)
+			echo -n "Enter a Image ID:"
+			read IMAGE_ID
+			echo -n "Enter a key name:"
+			read KEY_NAME
+			echo -n "Enter an instance type:"
+			read INSTANCE_TYPE
+			echo -n "Enter Security Group:"
+			read SECURITY_GROUP
+			aws ec2 run-instances --image-id ami-$IMAGE_ID --count 1 --instance-type $INSTANCE_TYPE --key-name $KEY_NAME --security-groups $SECURITY_GROUP
 			echo
-			echo "Not yet implemented"
+			echo "Creating instance..."
 			echo
 			;;
 		3)
+			echo -n "Enter an instance ID: "
+			read INSTANCE_ID
+			aws ec2 terminate-instances --instance-ids $INSTANCE_ID
 			echo
-			echo "Not yet implemented"
+			echo "Deleting instance..."
 			echo
 			;;
 		x)
